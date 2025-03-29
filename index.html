@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إدخال اسم وعرض صورة</title>
+    <style>
+      body {
+        background: #222;
+        color: #fff;
+        position: relative;
+        text-align: center;
+        font-size: 1rem;
+        font-family: sans-serif;
+        padding-bottom: 3em;
+      }
+
+      .page-wrap {
+        display: inline-block;
+        margin: 2em auto;
+      }
+
+      .controls__input {
+        display: block;
+        margin: 0 auto;
+        background: none;
+        border: none;
+        font-size: 1em;
+        padding-bottom: 0.5em;
+        border: 2px solid #ccc;
+        text-align: center;
+        outline: none;
+        color: #fff;
+        margin-bottom: 5px;
+      }
+
+      .controls__btn {
+        background: dodgerblue;
+        color: #fff;
+        border: none;
+        font-size: 1em;
+      }
+
+      .controls__label {
+        display: block;
+        font-size: 0.8em;
+        padding-top: 0.3em;
+        margin-bottom: 2em;
+      }
+
+      canvas {
+        background-color: #eee;
+        transition: opacity 0.3s;
+        position: relative;
+      }
+
+      .canvas-wrap {
+        margin-top: 50px;
+        position: relative;
+      }
+
+      #canvasID {
+        z-index: 9999;
+      }
+
+      /* إضافة CSS لتحريك النص */
+      .text-overlay {
+        position: absolute;
+        color: white;
+        font-size: 50px;
+        font-family: "Montserrat";
+        text-align: center;
+        top: 50px;
+        left: 50px;
+      }
+
+      /* زر التحميل */
+      .download-btn {
+        margin-top: 2em;
+        padding: 1em 2em;
+        background-color: dodgerblue;
+        color: #fff;
+        font-size: 1.2em;
+        border: none;
+        cursor: pointer;
+      }
+
+      .download-btn:hover {
+        background-color: #005bbb;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>بطاقه معايده اتحاد الشباب التقدمي</h1>
+    <div class="page-wrap">
+      <div class="controls">
+        <label class="controls__label" for="name">ادخل اسمك </label>
+        <input class="controls__input" id="name" type="text" value="" />
+        <div style="display: none">
+          <label class="controls__label" for="top"
+            >الموضع العلوي (Top Position):</label
+          >
+          <input class="controls__input" id="top" type="number" value="50" />
+
+          <label class="controls__label" for="left"
+            >الموضع الأيسر (Left Position):</label
+          >
+          <input class="controls__input" id="left" type="number" value="50" />
+        </div>
+      </div>
+
+      <div id="canvas-wrap">
+        <canvas style="display: block" id="imageCanvas">
+          <canvas id="canvasID"></canvas>
+        </canvas>
+      </div>
+
+      <button class="download-btn" id="downloadBtn">تحميل الصورة</button>
+    </div>
+
+    <script>
+      var text_title = "";
+      var canvas = document.getElementById("imageCanvas");
+      var ctx = canvas.getContext("2d");
+
+      window.addEventListener("load", DrawPlaceholder);
+
+      function DrawPlaceholder() {
+        var img = new Image();
+        img.onload = function () {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          DrawOverlay(img);
+        };
+        img.src = "12.png";
+      }
+
+      function DrawOverlay(img) {
+        ctx.drawImage(img, 0, 0);
+        if (text_title) {
+          DrawTextOnCanvas();
+        }
+      }
+
+      function DrawTextOnCanvas() {
+        var topPos = canvas.height - 50;
+        var leftPos = parseInt(document.getElementById("left").value, 10);
+
+        ctx.fillStyle = "black";
+        ctx.textBaseline = "middle";
+        ctx.font = "30px 'Montserrat'";
+        ctx.fillText(text_title, leftPos, topPos);
+      }
+
+      document.getElementById("name").addEventListener("keyup", function () {
+        text_title = this.value;
+        DrawPlaceholder();
+      });
+
+      function downloadImage() {
+        var link = document.createElement("a");
+        link.download = "image-with-text.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      }
+
+      document
+        .getElementById("downloadBtn")
+        .addEventListener("click", downloadImage);
+    </script>
+  </body>
+</html>
